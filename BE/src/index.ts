@@ -5,15 +5,18 @@ import bcrypt from 'bcrypt'
 import User from './model/user'
 import jwt from 'jsonwebtoken'
 import cookieParser from 'cookie-parser'
+import download from 'image-downloader'
 import 'dotenv/config'
 
 
 const app = express()
 const bcryptSalt = bcrypt.genSaltSync(10)
 const jwtSecret = '$(#hjifds09uwqrjoijfxoizjas0d9()*#)8942w'
+const port = 4000
 
 app.use(express.json())
 app.use(cookieParser())
+app.use('/uploads', express.static(__dirname + '/uploads/'))
 app.use(cors({
     credentials: true,
     origin: 'http://localhost:5173',
@@ -84,6 +87,17 @@ app.post('/logout', (req: Request, res: Response) => {
     res.cookie('token', '').json(true)
 })
 
-app.listen(4000, () => {
-    console.log(`server running at ${4000}`)
+app.post('/upload-by-link', async (req: Request, res: Response) => {
+    const {link} = req.body
+    const newName = 'photo' + Date.now() + '.jpg'
+    await download.image({
+        url: link,
+        dest: __dirname + '/uploads/' + newName,
+    })
+
+    res.json(newName)
+})
+
+app.listen(port, () => {
+    console.log(`server running at ${port}`)
 })
