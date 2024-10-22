@@ -6,6 +6,9 @@ import User from './model/user'
 import jwt from 'jsonwebtoken'
 import cookieParser from 'cookie-parser'
 import download from 'image-downloader'
+import multer from 'multer'
+import fs from 'fs'
+import path from 'path'
 import 'dotenv/config'
 
 
@@ -96,6 +99,23 @@ app.post('/upload-by-link', async (req: Request, res: Response) => {
     })
 
     res.json(newName)
+})
+
+const photoMiddleware = multer({dest: __dirname + '/uploads/'})
+app.post('/upload', photoMiddleware.array('photos', 100) ,async (req: Request, res: Response) => {
+    const uploadFiles = []
+    if (Array.isArray(req.files)) {
+        for (let i = 0; i < req.files.length; i++) {
+            const { path: filePath, originalname } = req.files[i] as Express.Multer.File;
+            const parts = originalname.split('.')
+            const ext = parts[parts.length - 1]
+            const newPath = filePath + '.' + ext
+            fs.renameSync(filePath, newPath)
+            const filename = path.basename(newPath);
+            uploadFiles.push(filename)
+        }
+    }
+    res.json(uploadFiles);
 })
 
 app.listen(port, () => {
