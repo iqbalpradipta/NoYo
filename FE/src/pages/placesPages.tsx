@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import Perks from '../Perks'
+import Perks from '../perks'
 import axios from 'axios'
 
 function PlacesPages() {
@@ -10,7 +10,7 @@ function PlacesPages() {
     const [photo, setPhoto] = useState<string[]>([])
     const [photoLink, setPhotoLink] = useState("")
     const [description, setDescription] = useState("")
-    const [perks, setPerks] = useState([])
+    const [perks, setPerks] = useState<string[]>([])
     const [extraInfo, setExtraInfo] = useState("")
     const [checkIn, setCheckIn] = useState("")
     const [checkOut, setCheckOut] = useState("")
@@ -39,11 +39,30 @@ function PlacesPages() {
 
     const addedPhotoByLink = async (e: React.FormEvent) => {
         e.preventDefault()
-        const {data: filename} = await axios.post('/upload-by-link', {link: photoLink})
+        const { data: filename } = await axios.post('/upload-by-link', { link: photoLink })
         setPhoto(prev => {
             return [...prev, filename]
         });
         setPhotoLink("")
+    }
+
+    const uploadPhoto = (e: ChangeEvent<HTMLInputElement>) => {
+        const files =  e.target.files
+        if (files && files.length > 0) {
+            const data = new FormData();
+            for (let i = 0; i < files.length; i++) {
+                data.append('photos', files[i]);
+            }
+    
+            axios.post('/upload', data, {
+                headers: {'Content-type': 'multipart/form-data'}
+            }).then(response => {
+                const {data: filenames} = response
+                setPhoto(prev => {
+                    return [...prev, ...filenames]
+                });
+            })
+        }
     }
 
 
@@ -73,16 +92,17 @@ function PlacesPages() {
                         </div>
                         <div className='mt-2 grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6'>
                             {photo.length > 0 && photo.map((link) => (
-                                <div>
-                                    <img className="rounded-2xl" src={`http://localhost:4000/uploads/${link}`} alt={link} />
+                                <div className='h-32 flex'>
+                                    <img className="rounded-2xl w-full object-cover" src={`http://localhost:4000/uploads/${link}`} alt={link} />
                                 </div>
                             ))}
-                            <button className='flex items-center gap-1 justify-center border bg-transparent rounded-2xl p-2 text-2xl text-gray-400'>
+                            <label className='h-32 cursor-pointer flex items-center gap-1 justify-center border bg-transparent rounded-2xl p-2 text-2xl text-gray-400'>
+                                <input type='file' className='hidden' onChange={uploadPhoto} />
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
                                 </svg>
                                 Upload
-                            </button>
+                            </label>
                         </div>
                         {preInput('Description', 'description of the place')}
                         <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder='description about your place' />
@@ -104,7 +124,7 @@ function PlacesPages() {
                             </div>
                             <div>
                                 <h3 className='mt-2 -mb-1'>Max number of guests</h3>
-                                <input type="number" value={maxGuests} onChange={(e) => setMaxGuests(e.target.valueAsNumber)}/>
+                                <input type="number" value={maxGuests} onChange={(e) => setMaxGuests(e.target.valueAsNumber)} />
                             </div>
                         </div>
                         <button className='primary my-4'>Save</button>
