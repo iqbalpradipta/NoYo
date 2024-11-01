@@ -1,33 +1,15 @@
-import React, { useContext, useState } from 'react'
-import { UserContext } from '../userContext'
-import { Link, Navigate, useParams } from 'react-router-dom'
-import axios from 'axios'
-import PlacesPages from './placesPages'
+import React from 'react'
+import { Link, useLocation } from 'react-router-dom'
 
-function AccountPage() {
-    const [redirect, setRedirect] = useState<string>("")
-    const { ready, user, setUser } = useContext(UserContext)
-    let { subpage } = useParams()
-
-    if (subpage == undefined) {
-        subpage = 'profile'
+function AccountNav() {
+    const {pathname} = useLocation()
+    let subpage = pathname.split('/')?.[2]
+    if(subpage === undefined) {
+       subpage = 'profile' 
     }
 
-    async function logout() {
-        await axios.post('/logout')
-        setUser(null)
-        setRedirect('/')
-    }
-
-    if (!ready) {
-        return 'Loading...'
-    }
-
-    if (ready && !user) {
-        return <Navigate to={'/login'} />
-    }
-
-    function linkClasses(type: string) {
+    const linkClasses = (type: string) => {
+        const isActive = pathname === '/account' && type === 'profile'
         let classes = 'inline-flex gap-1 py-2 px-6 rounded-full'
 
         if (type === subpage) {
@@ -38,11 +20,6 @@ function AccountPage() {
 
         return classes
     }
-
-    if (ready && !user && !redirect) {
-        return <Navigate to={redirect} />
-    }
-
     return (
         <>
             <nav className='w-full flex justify-center mt-8 gap-2 mb-8'>
@@ -65,17 +42,8 @@ function AccountPage() {
                     My Accomodations
                 </Link>
             </nav>
-            {subpage === 'profile' && (
-                <div className="text-center max-w-lg mx-auto">
-                    Logged in as {user?.name} ({user?.email})<br />
-                    <button onClick={logout} className='primary max-sm mt-2'>Logout</button>
-                </div>
-            )}
-            {subpage === 'places' && (
-                <PlacesPages />
-            )}
         </>
     )
 }
 
-export default AccountPage
+export default AccountNav

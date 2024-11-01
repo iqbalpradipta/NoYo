@@ -9,7 +9,11 @@ import download from 'image-downloader'
 import multer from 'multer'
 import fs from 'fs'
 import path from 'path'
+
+import PlaceModel from './model/place'
+
 import 'dotenv/config'
+
 
 
 const app = express()
@@ -116,6 +120,20 @@ app.post('/upload', photoMiddleware.array('photos', 100) ,async (req: Request, r
         }
     }
     res.json(uploadFiles);
+})
+
+app.post('/places', (req: Request, res: Response) => {
+    const {token} = req.cookies;
+    const {title, address, photos, description, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body
+    jwt.verify(token, jwtSecret, {}, async (err, userData: any) => {
+        if(err) throw err;
+        const resPlaces = await PlaceModel.create({
+            owner: userData.id, 
+            title, address, photos, description, perks, 
+            extraInfo, checkIn, checkOut, maxGuests
+        })
+        res.json(resPlaces)
+    })
 })
 
 app.listen(port, () => {
