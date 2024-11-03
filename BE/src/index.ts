@@ -129,10 +129,40 @@ app.post('/places', (req: Request, res: Response) => {
         if(err) throw err;
         const resPlaces = await PlaceModel.create({
             owner: userData.id, 
-            title, address, photos, description, perks, 
+            title, address, photos: photos, description, perks, 
             extraInfo, checkIn, checkOut, maxGuests
         })
         res.json(resPlaces)
+    })
+})
+
+app.get('/places', (req: Request, res: Response) => {
+    const {token} = req.cookies;
+    jwt.verify(token, jwtSecret, {}, async (err, userData: any) => {
+        if(err) throw err;
+        const {id} = userData;
+        res.json( await PlaceModel.find({owner: id}) )
+    })
+})
+
+app.get('/places/:id', async (req: Request, res: Response) => {
+    const {id} = req.params
+    res.json(await PlaceModel.findById(id))
+})
+
+app.put('/places/:id', async (req: Request, res: Response) => {
+    const {token} = req.cookies;
+    const {id, title, address, photos, description, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body
+    jwt.verify(token, jwtSecret, {}, async (err, userData: any) => {
+        const resData = await PlaceModel.findById(id)
+        if(userData.id === resData?.owner?.toString()) {
+            resData?.set({
+                title, address, photos: photos, description, perks, 
+                extraInfo, checkIn, checkOut, maxGuests
+            })
+            await resData?.save()
+            res.json('Success update data')
+        }
     })
 })
 
