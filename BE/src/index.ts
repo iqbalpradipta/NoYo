@@ -124,12 +124,12 @@ app.post('/upload', photoMiddleware.array('photos', 100) ,async (req: Request, r
 
 app.post('/places', (req: Request, res: Response) => {
     const {token} = req.cookies;
-    const {title, address, photos, description, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body
+    const {title, address, photo, description, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body
     jwt.verify(token, jwtSecret, {}, async (err, userData: any) => {
         if(err) throw err;
         const resPlaces = await PlaceModel.create({
             owner: userData.id, 
-            title, address, photos: photos, description, perks, 
+            title, address, photos: photo, description, perks, 
             extraInfo, checkIn, checkOut, maxGuests
         })
         res.json(resPlaces)
@@ -150,14 +150,14 @@ app.get('/places/:id', async (req: Request, res: Response) => {
     res.json(await PlaceModel.findById(id))
 })
 
-app.put('/places/:id', async (req: Request, res: Response) => {
+app.put('/places', async (req: Request, res: Response) => {
     const {token} = req.cookies;
-    const {id, title, address, photos, description, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body
+    const {id, title, address, photo, description, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body
     jwt.verify(token, jwtSecret, {}, async (err, userData: any) => {
         const resData = await PlaceModel.findById(id)
         if(userData.id === resData?.owner?.toString()) {
             resData?.set({
-                title, address, photos: photos, description, perks, 
+                title, address, photos: photo, description, perks, 
                 extraInfo, checkIn, checkOut, maxGuests
             })
             await resData?.save()

@@ -8,7 +8,7 @@ function PhotoUploader({photo, onChange}: IPhoto) {
     const addedPhotoByLink = async (e: React.FormEvent) => {
         e.preventDefault()
         const { data: filename } = await axios.post('/upload-by-link', { link: photoLink })
-        onChange((prev: string[]) => {
+        onChange((prev: string[] = []) => {
             return [...prev, filename]
         });
         setPhotoLink("")
@@ -26,7 +26,7 @@ function PhotoUploader({photo, onChange}: IPhoto) {
                 headers: { 'Content-type': 'multipart/form-data' }
             }).then(response => {
                 const { data: filenames } = response
-                onChange((prev: string[]) => {
+                onChange((prev: string[] = []) => {
                     return [...prev, ...filenames]
                 });
             })

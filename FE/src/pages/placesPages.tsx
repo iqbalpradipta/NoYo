@@ -30,9 +30,9 @@ function PlacesPages() {
                         to={'/account/places/' + place._id}
                         className='flex cursor-pointer gap-4 mb-1 bg-gray-100 p-4 rounded-2xl text-black shadow-md hover:bg-gray-200 transition'
                     >
-                        <div className='w-32 h-32 bg-gray-300 flex-shrink-0 overflow-hidden rounded-lg'>
+                        <div className='flex w-32 h-32 bg-gray-300 flex-shrink-0 overflow-hidden rounded-lg'>
                             {place.photos.length > 0 && (
-                                <img src={place.photos[0]} alt='' className='w-full h-full object-cover' />
+                                <img src={'http://localhost:4000/uploads/' + place.photos[0]} alt='' className='w-full h-full object-cover' />
                             )}
                         </div>
                         <div className='flex-grow'>
