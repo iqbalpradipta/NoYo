@@ -1,5 +1,5 @@
 export interface IPhoto {
-    photo: string[];
+    photos: string[];
     onChange: (photos: (prev: string[]) => string[]) => void;
 
 }

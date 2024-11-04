@@ -9,7 +9,7 @@ function PlacesFormPage() {
     const { id } = useParams()
     const [title, setTitle] = useState("")
     const [address, setAddress] = useState("")
-    const [photo, setPhoto] = useState<string[]>([])
+    const [photos, setPhotos] = useState<string[]>([])
     const [description, setDescription] = useState("")
     const [perks, setPerks] = useState<string[]>([])
     const [extraInfo, setExtraInfo] = useState("")
@@ -26,7 +26,7 @@ function PlacesFormPage() {
             const { data } = response
             setTitle(data.title)
             setAddress(data.address)
-            setPhoto(data.photo)
+            setPhotos(data.photos || [])
             setDescription(data.description)
             setPerks(data.perks)
             setExtraInfo(data.extraInfo)
@@ -59,7 +59,7 @@ function PlacesFormPage() {
 
     const savePlace = async (e: React.FormEvent) => {
         e.preventDefault();
-        const placeData = {title, address, photo, description, perks, extraInfo, checkIn, checkOut, maxGuests}
+        const placeData = { title, address, photos, description, perks, extraInfo, checkIn, checkOut, maxGuests }
         if (id) {
             await axios.put('/places', {
                 id,
@@ -68,6 +68,7 @@ function PlacesFormPage() {
             setRedirect(true)
         } else {
             await axios.post('/places', placeData)
+            console.log(placeData)
             setRedirect(true)
         }
     }
@@ -85,7 +86,7 @@ function PlacesFormPage() {
                 {preInput('Address', 'address to this place')}
                 <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder='address' />
                 {preInput('Photo', 'more = better')}
-                <PhotoUploader photo={photo} onChange={setPhoto} />
+                <PhotoUploader photos={photos} onChange={setPhotos} />
                 {preInput('Description', 'description of the place')}
                 <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder='description about your place' />
                 {preInput('Perks', 'select all the perks your place')}

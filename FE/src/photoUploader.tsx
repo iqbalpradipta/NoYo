@@ -2,7 +2,7 @@ import axios from 'axios'
 import React, { useState } from 'react'
 import { IPhoto } from './interface/IPhoto'
 
-function PhotoUploader({photo, onChange}: IPhoto) {
+function PhotoUploader({photos, onChange}: IPhoto) {
     const [photoLink, setPhotoLink] = useState<string>("")
 
     const addedPhotoByLink = async (e: React.FormEvent) => {
@@ -40,7 +40,7 @@ function PhotoUploader({photo, onChange}: IPhoto) {
                 <button onClick={addedPhotoByLink} className='bg-gray-200 grpw px-4 rounded-2xl text-black'>Add&nbsp;Photo</button>
             </div>
             <div className='mt-2 grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6'>
-                {photo?.length > 0 && photo.map((link: string) => (
+                {photos?.length > 0 && photos.map((link: string) => (
                     <div className='h-32 flex' key={link}>
                         <img className="rounded-2xl w-full object-cover" src={`http://localhost:4000/uploads/${link}`} alt={link} />
                     </div>
