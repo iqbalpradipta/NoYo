@@ -125,7 +125,6 @@ app.post('/upload', photoMiddleware.array('photos', 100) ,async (req: Request, r
 app.post('/places', (req: Request, res: Response) => {
     const {token} = req.cookies;
     const {title, address, photos, description, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body
-    console.log("Photo value in POST request:", photos);
     jwt.verify(token, jwtSecret, {}, async (err, userData: any) => {
         if(err) throw err;
         const resPlaces = await PlaceModel.create({
