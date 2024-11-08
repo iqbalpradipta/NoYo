@@ -7,7 +7,7 @@ import { IPlaces } from '../interface/IPlaces'
 function PlacesPages() {
     const [places, setPlaces] = useState([])
     useEffect(() => {
-        axios.get('/places').then(({ data }) => {
+        axios.get('/user-places').then(({ data }) => {
             setPlaces(data)
         })
     }, [])

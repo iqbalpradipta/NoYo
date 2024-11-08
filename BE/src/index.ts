@@ -136,7 +136,7 @@ app.post('/places', (req: Request, res: Response) => {
     })
 })
 
-app.get('/places', (req: Request, res: Response) => {
+app.get('/user-places', (req: Request, res: Response) => {
     const {token} = req.cookies;
     jwt.verify(token, jwtSecret, {}, async (err, userData: any) => {
         if(err) throw err;
@@ -165,6 +165,10 @@ app.put('/places', async (req: Request, res: Response) => {
             res.json('Success update data')
         }
     })
+})
+
+app.get('/places', async (req: Request, res: Response) => {
+    res.json(await PlaceModel.find())
 })
 
 app.listen(port, () => {
