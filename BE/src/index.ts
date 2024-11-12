@@ -147,7 +147,7 @@ app.get('/user-places', (req: Request, res: Response) => {
 
 app.get('/places/:id', async (req: Request, res: Response) => {
     const {id} = req.params
-    const place = await PlaceModel.findById(id);
+    const place = await PlaceModel.findById(id).sort({ createdAt: -1 });
     res.json(place);
 })
 
@@ -168,7 +168,7 @@ app.put('/places', async (req: Request, res: Response) => {
 })
 
 app.get('/places', async (req: Request, res: Response) => {
-    res.json(await PlaceModel.find())
+    res.json(await PlaceModel.find().sort({ createdAt: -1 }))
 })
 
 app.listen(port, () => {
