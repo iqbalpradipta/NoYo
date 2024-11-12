@@ -37,7 +37,7 @@ function PlacesPages() {
                         </div>
                         <div className='flex-grow'>
                             <h2 className='text-lg font-semibold text-gray-800'>{place.title}</h2>
-                            <p className='text-sm text-gray-600 mt-1'>{place.description}</p>
+                            <p className='text-sm text-gray-600 mt-1'>{place.description.length > 500 ? place.description.slice(0, 500) + "..." : place.description}</p>
                         </div>
                     </Link>
                 ))}

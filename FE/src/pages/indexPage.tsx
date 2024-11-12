@@ -8,7 +8,7 @@ export default function IndexPage() {
     const [places, setPlaces] = useState([])
     useEffect(() => {
         axios.get('/places').then(response => {
-            setPlaces([...response.data, ...response.data, ...response.data, ...response.data, ...response.data, ...response.data])
+            setPlaces(response.data)
         })
     }, [])
 
@@ -28,7 +28,7 @@ export default function IndexPage() {
                         {place.title}
                     </h2>
                     <div className="mt-1">
-                       <span className="font-bold">Rp.{place.price} / malam</span> 
+                       <span className="font-bold">{place.price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }).replace('IDR', '')} / Malam</span> 
                     </div>
                 </div>
             ))}
