@@ -141,13 +141,13 @@ app.get('/user-places', (req: Request, res: Response) => {
     jwt.verify(token, jwtSecret, {}, async (err, userData: any) => {
         if(err) throw err;
         const {id} = userData;
-        res.json( await PlaceModel.find({owner: id}) )
+        res.json( await PlaceModel.find({owner: id}).sort({ _id: -1 }) )
     })
 })
 
 app.get('/places/:id', async (req: Request, res: Response) => {
     const {id} = req.params
-    const place = await PlaceModel.findById(id).sort({ createdAt: -1 });
+    const place = await PlaceModel.findById(id);
     res.json(place);
 })
 
@@ -168,7 +168,7 @@ app.put('/places', async (req: Request, res: Response) => {
 })
 
 app.get('/places', async (req: Request, res: Response) => {
-    res.json(await PlaceModel.find().sort({ createdAt: -1 }))
+    res.json(await PlaceModel.find().sort({ _id: -1 }))
 })
 
 app.listen(port, () => {
