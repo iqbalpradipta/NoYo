@@ -38,13 +38,14 @@ function BookingWidget({place}: BookingWidgetProps) {
         const bookingId = response.data._id;
         setRedirect(`/account/bookings/${bookingId}`);
     }
-
+    
+    let total = numberOfNights * place.price
     if (redirect) {
         return <Navigate to={redirect} />
     }
 
     return (
-        <div className="bg-white shadow p-4 rounded-2xl">
+        <div className="bg-white shadow p-4 rounded-2xl text-black">
             <div className="text-2xl text-center">
                 Harga: {place.price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }).replace('IDR', '')} / Malam
             </div>
@@ -74,7 +75,7 @@ function BookingWidget({place}: BookingWidgetProps) {
                         <input type="text"
                             value={name}
                             onChange={e => setName(e.target.value)} />
-                        <label>Phone number:</label>
+                        <label>Phone number: </label>
                         <input type="tel"
                             value={phone}
                             onChange={e => setPhone(e.target.value)} />
@@ -84,7 +85,7 @@ function BookingWidget({place}: BookingWidgetProps) {
             <button onClick={bookThisPlace} className="primary mt-4">
                 Book this place
                 {numberOfNights > 0 && (
-                    <span> ${numberOfNights * place.price}</span>
+                    <span> {total.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }).replace('IDR', '')}</span>
                 )}
             </button>
         </div>

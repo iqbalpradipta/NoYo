@@ -10,7 +10,7 @@ export interface IPlaces {
     extraInfo: string,
     checkIn: number,
     checkOut: number,
-    maxGuest: number,
+    maxGuests: number,
     price: number
 }
 

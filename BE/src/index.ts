@@ -9,12 +9,9 @@ import download from 'image-downloader'
 import multer from 'multer'
 import fs from 'fs'
 import path from 'path'
-
 import PlaceModel from './model/place'
-
+import Booking from './model/booking'
 import 'dotenv/config'
-
-
 
 const app = express()
 const bcryptSalt = bcrypt.genSaltSync(10)
@@ -31,9 +28,14 @@ app.use(cors({
 
 mongoose.connect(`${process.env.MONGO_URL}`)
 
-app.get('/test', (req: Request, res: Response) => {
-    res.json('test ok')
-})
+function getUserDataFromReq(req: Request) {
+    return new Promise((resolve, reject) => {
+      jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
+        if (err) throw err;
+        resolve(userData);
+      });
+    });
+}
 
 app.post('/register', async (req: Request, res: Response) => {
     const {name, email, password} = req.body
@@ -170,6 +172,28 @@ app.put('/places', async (req: Request, res: Response) => {
 app.get('/places', async (req: Request, res: Response) => {
     res.json(await PlaceModel.find().sort({ _id: -1 }))
 })
+
+app.post('/bookings', async (req: Request, res: Response) => {
+    const userData = await getUserDataFromReq(req);
+    const {
+      place,checkIn,checkOut,numberOfGuests,name,phone,price,
+    } = req.body;
+    Booking.create({
+      place,checkIn,checkOut,numberOfGuests,name,phone,price,
+      user: (userData as any).id,
+    }).then((doc) => {
+      res.json(doc);
+    }).catch((err) => {
+      throw err;
+    });
+});
+  
+  
+  
+  app.get('/bookings', async (req: Request, res: Response) => {
+    const userData = await getUserDataFromReq(req);
+    res.json( await Booking.find({user: (userData as any).id}).populate('place') );
+  });
 
 app.listen(port, () => {
     console.log(`server running at ${port}`)
